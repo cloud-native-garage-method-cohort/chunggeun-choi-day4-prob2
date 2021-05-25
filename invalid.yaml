@@ -4,25 +4,28 @@ metadata:
   name: linter-pipeline
 spec:
   workspaces:
-    - name: shared-workspace
+    - name: pipeline-shared-data
+      description: |
+        This workspace will be used to share information between pipeline steps
   tasks:
-    - name: fetch-repository
-      taskRef:
-        name: git-clone
-      workspaces:
-        - name: output
-          workspace: shared-workspace
+    - name: clone-repository
       params:
         - name: url
           value: https://github.com/upslopeio/lint-markdown-files
-    - name: md-lint-run #lint mardown
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: pipeline-shared-data
+    - name: lint-repository
       taskRef:
         name: markdown-lint
       runAfter:
-        - fetch-repository
+        - clone-repository
       workspaces:
         - name: shared-workspace
-          workspace: shared-workspace
+          workspace: pipeline-shared-data
       params:
         - name: args
           value: ["."]
