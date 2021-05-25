@@ -14,10 +14,10 @@ spec:
           workspace: shared-workspace
       params:
         - name: url
-          value: https://github.com/upslopeio/lint-markdown-files
-    - name: md-lint-run #lint mardown
+          value: https://raw.githubusercontent.com/tektoncd/catalog/main/task/yaml-lint/0.1/yaml-lint.yaml
+    - name: yaml-lint-run #lint yaml
       taskRef:
-        name: markdown-lint
+        name: yaml-lint
       runAfter:
         - fetch-repository
       workspaces:
@@ -26,3 +26,16 @@ spec:
       params:
         - name: args
           value: ["."]
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: linter-pipeline-run-
+spec:
+  pipelineRef:
+    name: linter-pipeline
+  workspaces:
+    - name: shared-workspace
+      persistentvolumeclaim:
+        claimName: chunggeun-choi-pvc
